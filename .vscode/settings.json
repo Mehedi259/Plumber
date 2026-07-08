@@ -1,3 +1,5 @@
 {
-    "kiroAgent.configureMCP": "Disabled"
+    "kiroAgent.configureMCP": "Disabled",
+    "dart.sdkPath": "/opt/homebrew/share/flutter/bin/cache/dart-sdk",
+    "dart.flutterSdkPath": "/opt/homebrew/share/flutter"
 }
