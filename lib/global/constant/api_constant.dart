@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://13.61.209.135/api';
+  static const String baseUrl = 'https://api.adlplumb.com.au/api';
   
   // Auth endpoints
   static const String login = '/user/login/';
