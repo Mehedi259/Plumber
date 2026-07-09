@@ -5,6 +5,7 @@ import '../../../core/routes/route_path.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../global/controler/profile/profile_setup_controller.dart';
 import '../../../global/service/profile/profile_setup_service.dart';
+import '../../../global/models/country_code_model.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({Key? key}) : super(key: key);
@@ -25,6 +26,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   
   String _selectedRole = 'Select role';
   String _selectedSkill = 'Select skill';
+  
+  // Country codes for mobile numbers
+  CountryCode _selectedMobileCountryCode = CountryCodeData.defaultCountry;
+  CountryCode _selectedEmergencyCountryCode = CountryCodeData.defaultCountry;
 
   @override
   void dispose() {
@@ -123,30 +128,70 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                TextFormField(
-                  controller: _mobileController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your mobile number',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                Row(
+                  children: [
+                    // Country Code Dropdown
+                    Container(
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<CountryCode>(
+                          value: _selectedMobileCountryCode,
+                          icon: const Icon(Icons.arrow_drop_down, size: 20),
+                          items: CountryCodeData.countryCodes.map((CountryCode country) {
+                            return DropdownMenuItem<CountryCode>(
+                              value: country,
+                              child: Text(
+                                country.dialCode,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (CountryCode? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                _selectedMobileCountryCode = newValue;
+                              });
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    const SizedBox(width: 8),
+                    // Phone Number Input
+                    Expanded(
+                      child: TextFormField(
+                        controller: _mobileController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: 'Enter mobile number',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          contentPadding: const EdgeInsets.all(16),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your mobile number';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your mobile number';
-                    }
-                    return null;
-                  },
+                  ],
                 ),
                 const SizedBox(height: 24),
 
@@ -271,30 +316,70 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                TextFormField(
-                  controller: _emergencyMobileController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: '+1234567890',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                Row(
+                  children: [
+                    // Country Code Dropdown
+                    Container(
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<CountryCode>(
+                          value: _selectedEmergencyCountryCode,
+                          icon: const Icon(Icons.arrow_drop_down, size: 20),
+                          items: CountryCodeData.countryCodes.map((CountryCode country) {
+                            return DropdownMenuItem<CountryCode>(
+                              value: country,
+                              child: Text(
+                                country.dialCode,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (CountryCode? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                _selectedEmergencyCountryCode = newValue;
+                              });
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    const SizedBox(width: 8),
+                    // Phone Number Input
+                    Expanded(
+                      child: TextFormField(
+                        controller: _emergencyMobileController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: 'Enter mobile number',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          contentPadding: const EdgeInsets.all(16),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter emergency contact mobile';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter emergency contact mobile';
-                    }
-                    return null;
-                  },
+                  ],
                 ),
                 const SizedBox(height: 24),
 
@@ -438,7 +523,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
     final emergencyContact = EmergencyContact(
       name: _emergencyNameController.text.trim(),
-      mobile: _emergencyMobileController.text.trim(),
+      mobile: '${_selectedEmergencyCountryCode.dialCode}${_emergencyMobileController.text.trim()}',
       relation: _emergencyRelationController.text.trim(),
     );
 
@@ -448,7 +533,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
     final success = await _profileSetupController.updateProfileStep1(
       fullName: _nameController.text.trim(),
-      phone: _mobileController.text.trim(),
+      phone: '${_selectedMobileCountryCode.dialCode}${_mobileController.text.trim()}',
       primarySkill: primarySkillApi,
       profession: professionApi,
       employeeId: _employeeIdController.text.trim(),
