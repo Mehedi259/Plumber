@@ -127,6 +127,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+
+              SizedBox(height: 12.h),
+
+              Text(
+                "If you don't receive the OTP in your inbox, please check your spam folder.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: const Color(0xFF6B7280),
+                  fontSize: 12.sp,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
               
               SizedBox(height: 40.h),
               
