@@ -159,7 +159,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildDropdownField(_selectedRole, ['Select role', 'Plumber', 'Electrician', 'Technician'], true),
+                _buildDropdownField(_selectedRole, ['Select role', 'Plumber'], true),
                 const SizedBox(height: 24),
 
                 // Primary Skill
@@ -171,7 +171,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildDropdownField(_selectedSkill, ['Select skill', 'General', 'Plumbing', 'Pipe Fitting', 'Leak Repair', 'Installation'], false),
+                _buildDropdownField(_selectedSkill, ['Select skill', 'General'], false),
                 const SizedBox(height: 24),
 
                 // Employee ID
@@ -293,10 +293,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter emergency contact mobile';
                     }
-                    // Basic phone validation - must start with + and have at least 10 digits
-                    if (!value.startsWith('+') || value.length < 11) {
-                      return 'Please enter valid phone with country code (e.g., +1234567890)';
-                    }
                     return null;
                   },
                 ),
@@ -402,7 +398,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 item,
                 style: TextStyle(
                   fontSize: 14,
-                  color: item == items[0] ? Colors.grey : Colors.black,
+                  color: item.startsWith('Select') ? Colors.grey : Colors.black,
                 ),
               ),
             );
