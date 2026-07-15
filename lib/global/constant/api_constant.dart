@@ -18,7 +18,6 @@ class ApiConstants {
   
   // Job endpoints
   static const String myJobs = '/jobs/my/';
-  static const String myVehicles = '/jobs/employee/my-vehicles/';
   static const String jobsByDate = '/jobs/employee/jobs-by-date/';
   static String jobDetailsById(String uuid) => '/jobs/employee/$uuid/';
   static const String calendar = '/jobs/employee/calendar/';
@@ -31,6 +30,7 @@ class ApiConstants {
   static String submitReport(String jobReportId, String reportType) => '/reports/$jobReportId/submit/$reportType/';
   
   // Fleet endpoints
+  static const String myVehicle = '/user/my-vehicle/';
   static String vehicleDetails(String vehicleId) => '/fleet/$vehicleId/';
   static String inspectionHistory(String vehicleId) => '/inspections/vehicle/$vehicleId/history/';
   static String inspectionDetails(String inspectionId) => '/inspections/$inspectionId/';

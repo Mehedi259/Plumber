@@ -1,33 +1,53 @@
 import 'dart:convert';
+import 'dart:developer';
 import '../../constant/api_constant.dart';
 import '../api_services.dart';
 
 class VehicleService {
   Future<MyVehiclesResponse> getMyVehicles() async {
     try {
+      log('Fetching vehicle from: ${ApiConstants.baseUrl}${ApiConstants.myVehicle}');
       final response = await ApiService.get(
-        endpoint: ApiConstants.myVehicles,
+        endpoint: ApiConstants.myVehicle,
         includeAuth: true,
       );
 
+      log('Vehicle API response status: ${response.statusCode}');
+      log('Vehicle API response body: ${response.body}');
+
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        final vehicles = data.map((json) => VehicleData.fromJson(json)).toList();
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final bool hasVehicle = data['has_vehicle'] ?? false;
         
-        return MyVehiclesResponse(
-          success: true,
-          message: 'Vehicles fetched successfully',
-          vehicles: vehicles,
-        );
+        log('Has vehicle: $hasVehicle');
+        
+        if (hasVehicle && data['vehicle'] != null) {
+          final vehicle = VehicleData.fromJson(data['vehicle']);
+          log('Vehicle parsed successfully: ${vehicle.name}');
+          return MyVehiclesResponse(
+            success: true,
+            message: 'Vehicle fetched successfully',
+            vehicles: [vehicle],
+          );
+        } else {
+          log('No vehicle assigned to user');
+          return MyVehiclesResponse(
+            success: true,
+            message: 'No vehicle assigned',
+            vehicles: [],
+          );
+        }
       } else {
         final error = jsonDecode(response.body);
+        log('Vehicle API error: ${error['message']}');
         return MyVehiclesResponse(
           success: false,
-          message: error['message'] ?? 'Failed to fetch vehicles',
+          message: error['message'] ?? 'Failed to fetch vehicle',
           vehicles: [],
         );
       }
     } catch (e) {
+      log('Vehicle API exception: ${e.toString()}');
       return MyVehiclesResponse(
         success: false,
         message: 'Network error: ${e.toString()}',
@@ -119,8 +139,13 @@ class VehicleData {
   final String plate;
   final String status;
   final String? picture;
-  final int nextService;
-  final String lastInspectionDate;
+  final String? make;
+  final String? modelName;
+  final int? year;
+  final int? currentOdometerKm;
+  final int? nextServiceKm;
+  final int? kmUntilService;
+  final String? lastInspectionDate;
 
   VehicleData({
     required this.id,
@@ -128,8 +153,13 @@ class VehicleData {
     required this.plate,
     required this.status,
     this.picture,
-    required this.nextService,
-    required this.lastInspectionDate,
+    this.make,
+    this.modelName,
+    this.year,
+    this.currentOdometerKm,
+    this.nextServiceKm,
+    this.kmUntilService,
+    this.lastInspectionDate,
   });
 
   factory VehicleData.fromJson(Map<String, dynamic> json) {
@@ -139,20 +169,29 @@ class VehicleData {
       plate: json['plate'] ?? '',
       status: json['status'] ?? '',
       picture: json['picture'],
-      nextService: json['next_service'] ?? 0,
-      lastInspectionDate: json['last_inspection_date'] ?? '',
+      make: json['make'],
+      modelName: json['model_name'],
+      year: json['year'],
+      currentOdometerKm: json['current_odometer_km'],
+      nextServiceKm: json['next_service_km'],
+      kmUntilService: json['km_until_service'],
+      lastInspectionDate: json['last_inspection_date'],
     );
   }
 
   String? get image => picture;
   
-  double get kmUntilService => nextService.toDouble();
+  double get serviceDistance => (kmUntilService ?? 0).toDouble();
   
   List<MaintenanceHistory> get maintenanceHistory => [];
 
   String getFormattedLastInspection() {
+    if (lastInspectionDate == null || lastInspectionDate!.isEmpty) {
+      return 'N/A';
+    }
+    
     try {
-      final dateTime = DateTime.parse(lastInspectionDate);
+      final dateTime = DateTime.parse(lastInspectionDate!);
       final months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'

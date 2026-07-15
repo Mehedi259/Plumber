@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:get/get.dart';
 import '../../service/vehicle/vehicle_service.dart';
 
@@ -12,29 +13,36 @@ class VehicleController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    log('VehicleController initialized, fetching vehicles...');
     fetchMyVehicles();
   }
 
   Future<void> fetchMyVehicles() async {
+    log('Starting fetchMyVehicles...');
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
       final response = await _vehicleService.getMyVehicles();
+      log('Vehicle service response - success: ${response.success}, vehicles count: ${response.vehicles.length}');
 
       if (response.success && response.vehicles.isNotEmpty) {
         vehicles.value = response.vehicles;
         vehicle.value = response.vehicles.first;
+        log('Vehicle loaded: ${vehicle.value?.name}');
         isLoading.value = false;
       } else if (response.success && response.vehicles.isEmpty) {
         errorMessage.value = 'No vehicles assigned to your account';
+        log('No vehicles assigned');
         isLoading.value = false;
       } else {
         errorMessage.value = response.message;
+        log('Error: ${response.message}');
         isLoading.value = false;
       }
     } catch (e) {
       errorMessage.value = 'An error occurred: ${e.toString()}';
+      log('Exception in fetchMyVehicles: ${e.toString()}');
       isLoading.value = false;
     }
   }

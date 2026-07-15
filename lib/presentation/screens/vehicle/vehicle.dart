@@ -139,7 +139,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
-                        'Next Service: ${vehicle.kmUntilService.toStringAsFixed(0)} km',
+                        'Next Service: ${(vehicle.kmUntilService ?? 0).toStringAsFixed(0)} km',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF323232),
