@@ -129,10 +129,15 @@ class JobService {
       log('Start job API response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final responseData = jsonDecode(response.body);
+        final jobData = responseData['data'] != null 
+            ? JobDetailModel.fromJson(responseData['data'])
+            : null;
+        
         return JobActionResponse(
           success: true,
-          message: data['message'] ?? 'Job started successfully',
+          message: responseData['message'] ?? 'Job started successfully',
+          data: jobData,
         );
       } else {
         final error = jsonDecode(response.body);
@@ -164,10 +169,15 @@ class JobService {
       log('Complete job API response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final responseData = jsonDecode(response.body);
+        final jobData = responseData['data'] != null 
+            ? JobDetailModel.fromJson(responseData['data'])
+            : null;
+        
         return JobActionResponse(
           success: true,
-          message: data['message'] ?? 'Job completed successfully',
+          message: responseData['message'] ?? 'Job completed successfully',
+          data: jobData,
         );
       } else {
         final error = jsonDecode(response.body);
@@ -201,10 +211,12 @@ class JobDetailResponse {
 class JobActionResponse {
   final bool success;
   final String message;
+  final JobDetailModel? data;
 
   JobActionResponse({
     required this.success,
     required this.message,
+    this.data,
   });
 }
 

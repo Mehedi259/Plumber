@@ -157,19 +157,16 @@ class AuthService {
   // Check authentication status
   static Future<bool> checkAuthStatus() async {
     if (!TokenManager.isLoggedIn) {
-      return false;
-    }
-
-    // If remember me is disabled, clear tokens and require fresh login
-    if (!TokenManager.isRememberMeEnabled) {
-      log('Remember me disabled, clearing tokens for fresh login');
-      await TokenManager.clearTokens();
+      log('User not authenticated - no tokens found');
       return false;
     }
 
     // Try to get a valid access token (will refresh if needed)
     final validToken = await TokenManager.getValidAccessToken();
-    return validToken != null;
+    final isValid = validToken != null;
+    
+    log('Auth status check - Valid token: $isValid');
+    return isValid;
   }
 
   // Get current user data

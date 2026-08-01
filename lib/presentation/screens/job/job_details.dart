@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import '../../../core/routes/route_path.dart';
 import '../../../global/service/job/job_service.dart';
 import '../../../global/models/job_detail_model.dart';
@@ -65,6 +66,51 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     final uri = Uri.parse('mailto:$email');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
+    }
+  }
+
+  Future<void> _startJob(BuildContext context, String jobId) async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+      ),
+    );
+
+    final response = await _jobService.startJob(jobId);
+
+    if (!context.mounted) return;
+    Navigator.of(context).pop(); // Close loading
+
+    if (response.success) {
+      // Update local job detail with returned data
+      if (response.data != null) {
+        jobDetail.value = response.data;
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Navigate to start job screen
+      context.pushNamed(
+        RoutePath.startJob,
+        queryParameters: {
+          'jobId': jobId,
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -281,16 +327,27 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                               ),
                             ],
                           ),
-                          child: Text(
-                            job.jobDetails,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xCC323232),
-                              height: 1.30,
-                            ),
-                          ),
+                          child: job.jobDetails.isNotEmpty
+                              ? HtmlWidget(
+                                  job.jobDetails,
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xCC323232),
+                                    height: 1.30,
+                                  ),
+                                )
+                              : const Text(
+                                  'No job details provided',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0x99323232),
+                                    height: 1.30,
+                                  ),
+                                ),
                         ),
                       ],
                     ),
@@ -376,14 +433,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                context.pushNamed(
-                                  RoutePath.startJob,
-                                  queryParameters: {
-                                    'jobId': job.id,
-                                  },
-                                );
-                              },
+                              onPressed: () => _startJob(context, job.id),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF2563EB),
                                 padding: const EdgeInsets.symmetric(vertical: 12),

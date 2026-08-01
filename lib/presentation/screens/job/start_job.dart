@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import '../../../core/routes/route_path.dart';
 import '../../../global/service/job/job_service.dart';
 import '../../../global/models/job_detail_model.dart';
@@ -74,7 +75,7 @@ class _StartJobScreenState extends State<StartJobScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(color: Color(0xFF10B981)),
       ),
     );
 
@@ -84,12 +85,21 @@ class _StartJobScreenState extends State<StartJobScreen> {
     Navigator.of(context).pop(); // Close loading
 
     if (response.success) {
+      // Update local job detail with returned data
+      if (response.data != null) {
+        setState(() {
+          _jobDetail = response.data;
+        });
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response.message),
           backgroundColor: Colors.green,
         ),
       );
+      
+      // Navigate back to home
       context.goNamed(RoutePath.home);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -255,18 +265,27 @@ class _StartJobScreenState extends State<StartJobScreen> {
                     ),
                   ],
                 ),
-                child: Text(
-                  _jobDetail!.jobDetails.isNotEmpty
-                      ? _jobDetail!.jobDetails
-                      : 'No description provided',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xCC323232),
-                    height: 1.30,
-                  ),
-                ),
+                child: _jobDetail!.jobDetails.isNotEmpty
+                    ? HtmlWidget(
+                        _jobDetail!.jobDetails,
+                        textStyle: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xCC323232),
+                          height: 1.30,
+                        ),
+                      )
+                    : const Text(
+                        'No description provided',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0x99323232),
+                          height: 1.30,
+                        ),
+                      ),
               ),
 
               const SizedBox(height: 24),
