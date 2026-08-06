@@ -77,8 +77,8 @@ class JobDetailModel {
 
   String getFormattedTime() {
     try {
-      final dateTime = DateTime.parse(scheduledDatetime);
-      final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+      final dateTime = DateTime.parse(scheduledDatetime).toLocal();
+      final hour = dateTime.hour > 12 ? dateTime.hour - 12 : (dateTime.hour == 0 ? 12 : dateTime.hour);
       final period = dateTime.hour >= 12 ? 'PM' : 'AM';
       final minute = dateTime.minute.toString().padLeft(2, '0');
       return '$hour:$minute $period';

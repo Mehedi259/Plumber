@@ -35,7 +35,7 @@ class CalendarService {
         
         for (var job in jobs) {
           try {
-            final scheduledDate = DateTime.parse(job.scheduledDatetime);
+            final scheduledDate = DateTime.parse(job.scheduledDatetime).toLocal();
             final jobDate = DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day);
             
             log('Job ${job.jobId}: scheduled=$jobDate, today=$today, tomorrow=$tomorrow');
@@ -139,7 +139,7 @@ class CalendarJobData {
 
   String getFormattedTime() {
     try {
-      final dateTime = DateTime.parse(scheduledDatetime);
+      final dateTime = DateTime.parse(scheduledDatetime).toLocal();
       final hour = dateTime.hour > 12 ? dateTime.hour - 12 : (dateTime.hour == 0 ? 12 : dateTime.hour);
       final period = dateTime.hour >= 12 ? 'PM' : 'AM';
       final minute = dateTime.minute.toString().padLeft(2, '0');
@@ -156,6 +156,7 @@ class CalendarJobData {
       case 'in_progress':
         return const Color(0xFFE5F5E5);
       case 'completed':
+      case 'closed':
         return const Color(0xFFFFF9E5);
       case 'overdue':
         return const Color(0xFFFFE5E5);
@@ -172,12 +173,15 @@ class CalendarJobData {
         return 'In Progress';
       case 'overdue':
         return 'Overdue';
+      case 'closed':
+        return 'Closed';
       default:
         return null;
     }
   }
 
   bool isCompleted() {
-    return status.toLowerCase() == 'completed';
+    final s = status.toLowerCase();
+    return s == 'completed' || s == 'closed';
   }
 }

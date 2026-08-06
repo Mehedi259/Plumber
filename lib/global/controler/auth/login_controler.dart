@@ -28,6 +28,8 @@ class LoginController extends GetxController {
       isLoading.value = false;
 
       if (result['success']) {
+        // Fetch latest profile to ensure we have accurate onboarding status
+        await AuthService.fetchUserProfile();
         return true;
       } else {
         errorMessage.value = result['message'];

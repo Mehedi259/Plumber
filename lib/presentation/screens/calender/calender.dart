@@ -84,7 +84,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
     
     return _calendarController.thisWeekJobs.where((job) {
       try {
-        final jobDate = DateTime.parse(job.scheduledDatetime);
+        final jobDate = DateTime.parse(job.scheduledDatetime).toLocal();
         final jobDateOnly = DateTime(jobDate.year, jobDate.month, jobDate.day);
         return jobDateOnly.isAtSameMomentAs(selectedDateOnly);
       } catch (e) {
@@ -101,7 +101,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
     
     return _calendarController.thisWeekJobs.any((job) {
       try {
-        final jobDate = DateTime.parse(job.scheduledDatetime);
+        final jobDate = DateTime.parse(job.scheduledDatetime).toLocal();
         final jobDateOnly = DateTime(jobDate.year, jobDate.month, jobDate.day);
         return jobDateOnly.isAtSameMomentAs(dateOnly);
       } catch (e) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constant/api_constant.dart';
 import '../../models/report_model.dart';
@@ -80,10 +81,23 @@ class ReportService {
           
           for (var xFile in xFiles) {
             final bytes = await xFile.readAsBytes();
+            
+            // Determine content type based on extension
+            final ext = xFile.name.split('.').last.toLowerCase();
+            MediaType? contentType;
+            if (ext == 'jpg' || ext == 'jpeg') {
+              contentType = MediaType('image', 'jpeg');
+            } else if (ext == 'png') {
+              contentType = MediaType('image', 'png');
+            } else if (ext == 'pdf') {
+              contentType = MediaType('application', 'pdf');
+            }
+
             final multipartFile = http.MultipartFile.fromBytes(
               fieldName,
               bytes,
               filename: xFile.name,
+              contentType: contentType,
             );
             files[fieldName]!.add(multipartFile);
           }

@@ -52,7 +52,7 @@ class JobService {
       log('Fetching jobs with filter: $filter');
       
       final response = await ApiService.get(
-        endpoint: '${ApiConstants.myJobs}?filter=$filter',
+        endpoint: '${ApiConstants.myJobs}?filter=$filter&page_size=100',
         includeAuth: true,
       );
 
@@ -275,8 +275,8 @@ class JobData {
 
   String getFormattedTime() {
     try {
-      final dateTime = DateTime.parse(scheduledDatetime);
-      final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+      final dateTime = DateTime.parse(scheduledDatetime).toLocal();
+      final hour = dateTime.hour > 12 ? dateTime.hour - 12 : (dateTime.hour == 0 ? 12 : dateTime.hour);
       final period = dateTime.hour >= 12 ? 'PM' : 'AM';
       final minute = dateTime.minute.toString().padLeft(2, '0');
       return '$hour:$minute $period';
@@ -292,6 +292,7 @@ class JobData {
       case 'in_progress':
         return const Color(0xFFE5F5E5);
       case 'completed':
+      case 'closed':
         return const Color(0xFFFFF9E5);
       default:
         return const Color(0xFFE5E5E5);
@@ -304,13 +305,16 @@ class JobData {
         return 'Safety Check Required';
       case 'in_progress':
         return 'In Progress';
+      case 'closed':
+        return 'Closed';
       default:
         return null;
     }
   }
 
   bool isCompleted() {
-    return status.toLowerCase() == 'completed';
+    final s = status.toLowerCase();
+    return s == 'completed' || s == 'closed';
   }
 }
 
