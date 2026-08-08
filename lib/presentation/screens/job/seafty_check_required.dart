@@ -114,8 +114,8 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          // Navigate back to job details
-          context.pop();
+          // Navigate back to job details with success flag
+          context.pop(true);
         }
       } else {
         if (mounted) {
@@ -210,8 +210,12 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () => context.pop(),
-                  child: const Text('Go Back'),
+                  onPressed: () => context.pop(true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2563EB),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Continue to Start Job'),
                 ),
               ],
             ),

@@ -70,6 +70,28 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Future<void> _startJob(BuildContext context, String jobId) async {
+    final job = jobDetail.value;
+    if (job == null) return;
+    
+    if (job.safetyFormIds.isNotEmpty) {
+      final result = await context.pushNamed(
+        RoutePath.safetyCheck,
+        queryParameters: {
+          'jobId': jobId,
+          'address': job.client.address,
+          'templateId': job.safetyFormIds.first,
+        },
+      );
+      
+      if (result == true) {
+        await _executeStartJob(context, jobId);
+      }
+    } else {
+      await _executeStartJob(context, jobId);
+    }
+  }
+
+  Future<void> _executeStartJob(BuildContext context, String jobId) async {
     // Show loading
     showDialog(
       context: context,

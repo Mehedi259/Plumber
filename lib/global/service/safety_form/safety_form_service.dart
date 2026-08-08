@@ -30,10 +30,16 @@ class SafetyFormService {
           template: template,
         );
       } else {
-        final error = jsonDecode(response.body);
+        String errorMsg = 'Failed to fetch safety form template';
+        try {
+          final error = jsonDecode(response.body);
+          errorMsg = error['message'] ?? error['detail'] ?? 'Status: ${response.statusCode}';
+        } catch (_) {
+          errorMsg = 'Status: ${response.statusCode}, Body: ${response.body}';
+        }
         return SafetyFormTemplateResponse(
           success: false,
-          message: error['message'] ?? 'Failed to fetch safety form template',
+          message: errorMsg,
         );
       }
     } catch (e) {

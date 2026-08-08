@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import '../constant/api_constant.dart';
 import 'auth/token_manager.dart';
@@ -20,6 +21,22 @@ class ApiService {
     return headers;
   }
 
+  static void _logRequest(String method, Uri url, Map<String, String> headers, [dynamic body]) {
+    log('--- API REQUEST ($method) ---');
+    log('URL: $url');
+    log('Headers: $headers');
+    if (body != null) {
+      log('Body: $body');
+    }
+  }
+
+  static void _logResponse(String method, http.Response response) {
+    log('--- API RESPONSE ($method) ---');
+    log('Status: ${response.statusCode}');
+    log('Body: ${response.body}');
+    log('---------------------------');
+  }
+
   static Future<http.Response> post({
     required String endpoint,
     required Map<String, dynamic> body,
@@ -27,12 +44,18 @@ class ApiService {
   }) async {
     final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
+    final jsonBody = jsonEncode(body);
+    
+    _logRequest('POST', url, headers, jsonBody);
 
-    return await http.post(
+    final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode(body),
+      body: jsonBody,
     );
+    
+    _logResponse('POST', response);
+    return response;
   }
 
   static Future<http.Response> get({
@@ -42,10 +65,15 @@ class ApiService {
     final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
 
-    return await http.get(
+    _logRequest('GET', url, headers);
+
+    final response = await http.get(
       url,
       headers: headers,
     );
+
+    _logResponse('GET', response);
+    return response;
   }
 
   static Future<http.Response> patch({
@@ -55,12 +83,18 @@ class ApiService {
   }) async {
     final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
+    final jsonBody = jsonEncode(body);
 
-    return await http.patch(
+    _logRequest('PATCH', url, headers, jsonBody);
+
+    final response = await http.patch(
       url,
       headers: headers,
-      body: jsonEncode(body),
+      body: jsonBody,
     );
+
+    _logResponse('PATCH', response);
+    return response;
   }
 
   static Future<http.Response> delete({
@@ -70,10 +104,15 @@ class ApiService {
     final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
 
-    return await http.delete(
+    _logRequest('DELETE', url, headers);
+
+    final response = await http.delete(
       url,
       headers: headers,
     );
+
+    _logResponse('DELETE', response);
+    return response;
   }
 
   static Future<http.Response> postMultipart({
@@ -109,7 +148,16 @@ class ApiService {
       });
     }
 
+    log('--- API REQUEST (MULTIPART POST) ---');
+    log('URL: $url');
+    log('Headers: ${request.headers}');
+    log('Fields: ${request.fields}');
+    log('Files: ${files?.keys.toList()}');
+
     final streamedResponse = await request.send();
-    return await http.Response.fromStream(streamedResponse);
+    final response = await http.Response.fromStream(streamedResponse);
+    
+    _logResponse('MULTIPART POST', response);
+    return response;
   }
 }
