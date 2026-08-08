@@ -100,6 +100,19 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
         });
       });
 
+      if (form.alreadySubmitted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Safety check completed.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.pop(true);
+        }
+        return;
+      }
+
       final response = await _safetyFormService.submitSafetyForm(
         widget.jobId,
         form.template.id,
@@ -186,39 +199,6 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
         if (form == null) {
           return const Center(
             child: Text('No safety form available'),
-          );
-        }
-
-        if (form.alreadySubmitted) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  color: Color(0xFF10B981),
-                  size: 64,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Safety form already submitted',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => context.pop(true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('Continue to Start Job'),
-                ),
-              ],
-            ),
           );
         }
 

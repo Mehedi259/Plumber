@@ -20,6 +20,18 @@ class _StartJobScreenState extends State<StartJobScreen> {
   bool _isLoading = true;
   String? _errorMessage;
 
+  // Completion Checklist State
+  bool _checkTasksCompleted = false;
+  bool _checkAreaCleaned = false;
+  bool _checkWasteDisposed = false;
+  bool _checkClientBriefed = false;
+
+  bool get _canCompleteJob =>
+      _checkTasksCompleted &&
+      _checkAreaCleaned &&
+      _checkWasteDisposed &&
+      _checkClientBriefed;
+
   @override
   void initState() {
     super.initState();
@@ -505,15 +517,62 @@ class _StartJobScreenState extends State<StartJobScreen> {
                 const SizedBox(height: 12),
               ],
 
+              // Completion Checklist
+              const Text(
+                'Pre-completion Checklist',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF323232),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
+                  children: [
+                    _buildChecklistItem(
+                      'All job tasks have been successfully completed',
+                      _checkTasksCompleted,
+                      (val) => setState(() => _checkTasksCompleted = val ?? false),
+                    ),
+                    const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                    _buildChecklistItem(
+                      'Area has been cleaned and restored to original condition',
+                      _checkAreaCleaned,
+                      (val) => setState(() => _checkAreaCleaned = val ?? false),
+                    ),
+                    const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                    _buildChecklistItem(
+                      'Waste materials have been disposed of properly',
+                      _checkWasteDisposed,
+                      (val) => setState(() => _checkWasteDisposed = val ?? false),
+                    ),
+                    const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                    _buildChecklistItem(
+                      'Client has been briefed about the completed work',
+                      _checkClientBriefed,
+                      (val) => setState(() => _checkClientBriefed = val ?? false),
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 32),
 
               // Action Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _completeJob,
+                  onPressed: _canCompleteJob ? _completeJob : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF10B981),
+                    disabledBackgroundColor: const Color(0xFF10B981).withOpacity(0.5),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -598,6 +657,73 @@ class _StartJobScreenState extends State<StartJobScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTimelineItem(String time, String action) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(top: 6),
+            decoration: const BoxDecoration(
+              color: Color(0xFF2563EB),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  action,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF323232),
+                  ),
+                ),
+                Text(
+                  time,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChecklistItem(String title, bool value, ValueChanged<bool?> onChanged) {
+    return CheckboxListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w400,
+          color: value ? const Color(0xFF323232) : const Color(0xFF64748B),
+          decoration: value ? TextDecoration.lineThrough : null,
+        ),
+      ),
+      value: value,
+      onChanged: onChanged,
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: const Color(0xFF10B981),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      visualDensity: VisualDensity.compact,
     );
   }
 
