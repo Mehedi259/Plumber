@@ -302,7 +302,9 @@ class JobData {
       jobName: json['job_name'] ?? 'Not Mentioned',
       client: ClientData(
         name: json['client_name'] ?? 'Unknown',
-        address: json['client_address'] ?? 'Unknown',
+        address: (json['insured_address'] != null && json['insured_address'].toString().trim().isNotEmpty)
+            ? json['insured_address']
+            : (json['client_address'] ?? 'Unknown'),
       ),
       scheduledDatetime: json['scheduled_datetime'] ?? '',
       status: json['status'] ?? 'pending',

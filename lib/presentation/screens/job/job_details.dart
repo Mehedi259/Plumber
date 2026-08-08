@@ -78,7 +78,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         RoutePath.safetyCheck,
         queryParameters: {
           'jobId': jobId,
-          'address': job.client.address,
+          'address': job.insuredAddress.isNotEmpty ? job.insuredAddress : job.client.address,
           'templateId': job.safetyFormIds.first,
         },
       );
@@ -269,7 +269,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             RoutePath.safetyCheck,
                             queryParameters: {
                               'jobId': job.id,
-                              'address': job.client.address,
+                              'address': job.insuredAddress.isNotEmpty ? job.insuredAddress : job.client.address,
                               'templateId': job.safetyFormIds.first,
                             },
                           );

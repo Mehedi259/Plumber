@@ -259,7 +259,7 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      form.clientAddress,
+                      widget.address,
                       style: const TextStyle(
                         fontSize: 16,
                         fontFamily: 'Poppins',
