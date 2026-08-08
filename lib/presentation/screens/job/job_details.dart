@@ -114,6 +114,42 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
   }
 
+  Future<void> _reopenJob(BuildContext context, String jobId) async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+      ),
+    );
+
+    final response = await _jobService.reopenJob(jobId);
+
+    if (!context.mounted) return;
+    Navigator.of(context).pop(); // Close loading
+
+    if (response.success) {
+      if (response.data != null) {
+        jobDetail.value = response.data;
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -263,11 +299,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           _buildInfoRow(
                             Icons.location_on_outlined,
                             'Address',
-                            job.client.address,
+                            job.insuredAddress.isNotEmpty ? job.insuredAddress : job.client.address,
                             const Color(0xFF2563EB),
-                            onTap: job.client.mapsUrl != null
-                                ? () => _launchUrl(job.client.mapsUrl!)
-                                : null,
+                            onTap: () {
+                              final addressToSearch = job.insuredAddress.isNotEmpty ? job.insuredAddress : job.client.address;
+                              _launchUrl('https://maps.google.com/?q=${Uri.encodeComponent(addressToSearch)}');
+                            },
                           ),
                           const Divider(height: 24),
                           _buildInfoRow(
@@ -282,6 +319,15 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                               Icons.local_shipping_outlined,
                               'Vehicle: ${job.vehicle!.name}',
                               'Vehicle no: ${job.vehicle!.plate}',
+                              const Color(0xFF2563EB),
+                            ),
+                          ],
+                          if (job.siteAccessInfo.isNotEmpty) ...[
+                            const Divider(height: 24),
+                            _buildInfoRow(
+                              Icons.vpn_key_outlined,
+                              'Site Access Info',
+                              job.siteAccessInfo,
                               const Color(0xFF2563EB),
                             ),
                           ],
@@ -379,6 +425,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           phone: job.client.phone,
                           profilePicture: job.client.profilePicture,
                         ),
+                        if (job.insuredName.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          // Insured Contact
+                          _buildContactCard(
+                            name: job.insuredName,
+                            role: 'insured',
+                            email: job.insuredEmail,
+                            phone: job.insuredPhone,
+                            profilePicture: null,
+                          ),
+                        ],
                         if (job.assignedTo != null) ...[
                           const SizedBox(height: 12),
                           // Employee Contact
@@ -484,6 +541,32 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             ),
                           ),
                         ),
+                        if (job.status.toLowerCase() == 'completed') ...[
+                          const SizedBox(height: 12),
+                          // Reopen Job button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => _reopenJob(context, job.id),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF2563EB),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Re-open Job',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

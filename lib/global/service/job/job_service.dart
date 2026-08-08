@@ -194,6 +194,46 @@ class JobService {
       );
     }
   }
+
+  Future<JobActionResponse> reopenJob(String jobId) async {
+    try {
+      log('Reopening job: $jobId');
+      
+      final response = await ApiService.post(
+        endpoint: ApiConstants.reopenJob(jobId),
+        body: {},
+        includeAuth: true,
+      );
+
+      log('Reopen job API response status: ${response.statusCode}');
+      log('Reopen job API response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final jobData = responseData['data'] != null 
+            ? JobDetailModel.fromJson(responseData['data'])
+            : null;
+        
+        return JobActionResponse(
+          success: true,
+          message: responseData['message'] ?? 'Job reopened successfully',
+          data: jobData,
+        );
+      } else {
+        final error = jsonDecode(response.body);
+        return JobActionResponse(
+          success: false,
+          message: error['message'] ?? 'Failed to reopen job',
+        );
+      }
+    } catch (e) {
+      log('Reopen job API error: $e');
+      return JobActionResponse(
+        success: false,
+        message: 'Network error: ${e.toString()}',
+      );
+    }
+  }
 }
 
 class JobDetailResponse {

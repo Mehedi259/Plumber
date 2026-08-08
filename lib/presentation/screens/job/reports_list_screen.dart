@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../global/models/job_detail_model.dart';
 import '../../../core/routes/route_path.dart';
 
-class ReportsListScreen extends StatelessWidget {
+class ReportsListScreen extends StatefulWidget {
   final String jobId;
   final List<ReportInfo> reports;
 
@@ -12,6 +12,19 @@ class ReportsListScreen extends StatelessWidget {
     required this.jobId,
     required this.reports,
   });
+
+  @override
+  State<ReportsListScreen> createState() => _ReportsListScreenState();
+}
+
+class _ReportsListScreenState extends State<ReportsListScreen> {
+  late List<ReportInfo> _reports;
+
+  @override
+  void initState() {
+    super.initState();
+    _reports = List.from(widget.reports);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +50,16 @@ class ReportsListScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: reports.length,
+        itemCount: _reports.length,
         itemBuilder: (context, index) {
-          final report = reports[index];
-          return _buildReportCard(context, report);
+          final report = _reports[index];
+          return _buildReportCard(context, report, index);
         },
       ),
     );
   }
 
-  Widget _buildReportCard(BuildContext context, ReportInfo report) {
+  Widget _buildReportCard(BuildContext context, ReportInfo report, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -65,8 +78,8 @@ class ReportsListScreen extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        onTap: () {
-          context.pushNamed(
+        onTap: () async {
+          final result = await context.pushNamed(
             RoutePath.reportForm,
             queryParameters: {
               'jobReportId': report.jobReportId,
@@ -74,6 +87,18 @@ class ReportsListScreen extends StatelessWidget {
               'reportTypeDisplay': report.reportTypeDisplay,
             },
           );
+          
+          if (result == true) {
+            setState(() {
+              _reports[index] = ReportInfo(
+                jobReportId: report.jobReportId,
+                reportType: report.reportType,
+                reportTypeDisplay: report.reportTypeDisplay,
+                isSubmitted: true,
+                submittedAt: DateTime.now().toIso8601String(),
+              );
+            });
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(

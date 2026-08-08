@@ -23,6 +23,7 @@ class ApiConstants {
   static const String calendar = '/jobs/employee/calendar/';
   static String startJob(String jobId) => '/jobs/employee/$jobId/start/';
   static String completeJob(String jobId) => '/jobs/employee/$jobId/complete/';
+  static String reopenJob(String jobId) => '/jobs/employee/$jobId/reopen/';
   
   // Report endpoints
   static String reportFormFields(String jobReportId) => '/reports/$jobReportId/formfields/';

@@ -15,6 +15,11 @@ class JobDetailModel {
   final int grandTotal;
   final bool isOverdue;
   final bool hasFleetIssue;
+  final String insuredName;
+  final String insuredPhone;
+  final String insuredEmail;
+  final String insuredAddress;
+  final String siteAccessInfo;
 
   JobDetailModel({
     required this.id,
@@ -33,6 +38,11 @@ class JobDetailModel {
     required this.grandTotal,
     required this.isOverdue,
     required this.hasFleetIssue,
+    this.insuredName = '',
+    this.insuredPhone = '',
+    this.insuredEmail = '',
+    this.insuredAddress = '',
+    this.siteAccessInfo = '',
   });
 
   factory JobDetailModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +82,11 @@ class JobDetailModel {
       grandTotal: json['grand_total'] ?? 0,
       isOverdue: json['is_overdue'] ?? false,
       hasFleetIssue: json['has_fleet_issue'] ?? false,
+      insuredName: json['insured_name'] ?? '',
+      insuredPhone: json['insured_phone'] ?? '',
+      insuredEmail: json['insured_email'] ?? '',
+      insuredAddress: json['insured_address'] ?? '',
+      siteAccessInfo: json['site_access_info'] ?? '',
     );
   }
 

@@ -116,7 +116,7 @@ class _ReportFormScreenState extends State<ReportFormScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          context.pop();
+          context.pop(true);
         }
       } else {
         if (mounted) {
