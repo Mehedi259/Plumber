@@ -376,24 +376,7 @@ class _JobScreenState extends State<JobScreen> with SingleTickerProviderStateMix
                   ),
                 ],
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.directions_car_outlined, size: 16, color: Color(0xB2323232)),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Vehicle no: ${job.vehicle.vehicleNumber}',
-                    style: const TextStyle(
-                      color: Color(0xB2323232),
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w300,
-                      height: 1.05,
-                      letterSpacing: -0.30,
-                    ),
-                  ),
-                ],
-              ),
+
             ],
           ),
           const SizedBox(height: 12),

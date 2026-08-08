@@ -6,6 +6,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import '../../../core/routes/route_path.dart';
 import '../../../global/service/job/job_service.dart';
 import '../../../global/models/job_detail_model.dart';
+import '../../../global/controler/job/job_controller.dart';
 import '../../widgets/animated_section.dart';
 
 class JobDetailsScreen extends StatefulWidget {
@@ -112,11 +113,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         jobDetail.value = response.data;
       }
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.green,
-        ),
+      // Refresh jobs list in the background
+      try {
+        Get.find<JobController>().refreshJobs();
+      } catch (e) {
+        // ignore if controller not found
+      }
+      
+      Get.snackbar(
+        'Success',
+        response.message,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
       
       // Navigate to start job screen
@@ -127,11 +137,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         },
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.red,
-        ),
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
     }
   }
@@ -156,18 +168,29 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         jobDetail.value = response.data;
       }
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.green,
-        ),
+      // Refresh jobs list in the background
+      try {
+        Get.find<JobController>().refreshJobs();
+      } catch (e) {
+        // ignore if controller not found
+      }
+      
+      Get.snackbar(
+        'Success',
+        response.message,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.red,
-        ),
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
     }
   }

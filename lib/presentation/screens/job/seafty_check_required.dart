@@ -59,10 +59,31 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
           }
         }
       } else {
-        errorMessage.value = response.message;
+        // If the API returns an error (e.g., 404 because user is not assigned), bypass the form
+        if (mounted) {
+          Get.snackbar(
+            'Safety Form Not Required',
+            'You can proceed without a safety form.',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(16),
+          );
+          context.pop(true);
+        }
       }
     } catch (e) {
-      errorMessage.value = 'An error occurred: ${e.toString()}';
+      if (mounted) {
+        Get.snackbar(
+          'Safety Check Error',
+          e.toString(),
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          margin: const EdgeInsets.all(16),
+        );
+        context.pop(true);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -102,11 +123,13 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
 
       if (form.alreadySubmitted) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Safety check completed.'),
-              backgroundColor: Colors.green,
-            ),
+          Get.snackbar(
+            'Success',
+            'Safety check completed.',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(16),
           );
           context.pop(true);
         }
@@ -121,32 +144,38 @@ class _SafetyCheckRequiredScreenState extends State<SafetyCheckRequiredScreen> {
 
       if (response.success) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              backgroundColor: Colors.green,
-            ),
+          Get.snackbar(
+            'Success',
+            response.message,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(16),
           );
           // Navigate back to job details with success flag
           context.pop(true);
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              backgroundColor: Colors.red,
-            ),
+          Get.snackbar(
+            'Error',
+            response.message,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(16),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('An error occurred: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        Get.snackbar(
+          'Error',
+          'An error occurred: ${e.toString()}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          margin: const EdgeInsets.all(16),
         );
       }
     } finally {

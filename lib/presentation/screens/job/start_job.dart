@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import '../../../core/routes/route_path.dart';
 import '../../../global/service/job/job_service.dart';
 import '../../../global/models/job_detail_model.dart';
+import '../../../global/controler/job/job_controller.dart';
 
 class StartJobScreen extends StatefulWidget {
   final String jobId;
@@ -104,21 +106,32 @@ class _StartJobScreenState extends State<StartJobScreen> {
         });
       }
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.green,
-        ),
+      // Refresh jobs list in the background
+      try {
+        Get.find<JobController>().refreshJobs();
+      } catch (e) {
+        // ignore if controller not found
+      }
+      
+      Get.snackbar(
+        'Success',
+        response.message,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
       
       // Navigate back to home
       context.goNamed(RoutePath.home);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.red,
-        ),
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
       );
     }
   }

@@ -343,16 +343,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                     ],
                   ],
                 ),
-                if (job.vehiclePlate != null)
-                  const SizedBox(height: 4),
-                if (job.vehiclePlate != null)
-                  Row(
-                    children: [
-                      const Icon(Icons.directions_car_outlined, size: 16, color: Colors.black54),
-                      const SizedBox(width: 4),
-                      Text('Vehicle no: ${job.vehiclePlate}', style: const TextStyle(fontSize: 12)),
-                    ],
-                  ),
+
               ],
             ),
           ),
